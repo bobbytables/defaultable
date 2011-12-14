@@ -3,14 +3,12 @@ require 'ostruct'
 require 'yaml'
 require 'active_support/core_ext/class/attribute'
 
+require 'pp'
 require 'pry'
 
 module Defaultable
-	class Setting
-		class_attribute :defaults_file
-		class_attribute :defaults_hash
-		defaults_hash = {}
-
+	class Settings
+		class_attribute :defaults
 		attr_accessor :root_key, :parent
 
 	  def initialize(hash=nil, root_key=nil, parent=nil)
@@ -27,7 +25,7 @@ module Defaultable
 	    if !hash.nil? && hash.kind_of?(Hash)
 		    hash.each do |key, value|
 		      if value.kind_of?(Hash)
-		        send("#{key}=", Defaultable::Setting.new(value, key, self))
+		        send("#{key}=", Defaultable::Settings.new(value, key, self))
 		      else
 		        self.send("#{key}=", value)
 		      end
@@ -76,13 +74,15 @@ module Defaultable
 	  end
 	  
 	  class << self
-	    def defaults
-	    	if self.defaults_file
-	      	settings = YAML.load_file(defaults_file)
-	      	return Defaultable::Setting.new(settings)
-	      elsif !self.defaults_hash.empty? && self.defaults_hash.kind_of?(Hash)
-	      	return Defaultable::Setting.new(self.defaults_hash)
-	      end
+	    def set_defaults(settings)
+	    	case settings
+	    	when Hash
+	    		self.defaults = Defaultable::Settings.new(settings)
+	    	when String
+	    		self.defaults = Defaultable::Settings.new(YAML.load_file(settings))
+	    	else
+	    		raise ArgumentError, "You must supply a hash or a file name for default settings"
+	    	end
 	    end
 	  end
 	end
