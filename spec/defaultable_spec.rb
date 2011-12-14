@@ -121,4 +121,22 @@ describe Defaultable::Settings do
     setting = DummySetting.new
     setting.movie.should eq('Iron Man')
   end
+
+  describe "Hashes" do
+    it ".as_hash should return a hash" do
+      Defaultable::Settings.set_defaults :child => 'sxephil'
+      setting = Defaultable::Settings.new
+
+      setting.name = 'Robert'
+      setting.as_hash.should be_kind_of Hash
+    end
+
+    it ".as_hash should return a hash with the correct keys" do
+      Defaultable::Settings.set_defaults :child => 'sxephil'
+      setting = Defaultable::Settings.new
+
+      setting.name = 'Robert'
+      setting.as_hash['name'].should eq('Robert')
+    end
+  end
 end
