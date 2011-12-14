@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Defaultable::Setting do
+	after :each do
+		Defaultable::Setting.defaults_file = nil
+		Defaultable::Setting.defaults_hash = {}
+	end
+
 	it "should not have a parent" do
 		setting = Defaultable::Setting.new
 		setting.has_parent?.should be_false
@@ -93,5 +98,14 @@ describe Defaultable::Setting do
 		setting.grandparent.child.grandchild3.should eq('hurdur')
 		setting.grandparent.someotherkey = 'saweet'
 		setting.grandparent.someotherkey.should eq('saweet')
+	end
+
+	it "should be able to set a hash for defaults" do
+		Defaultable::Setting.defaults_hash = {
+			:child => 'sxephil'
+		}
+
+		setting = Defaultable::Setting.new
+		setting.child.should eq('sxephil')
 	end
 end

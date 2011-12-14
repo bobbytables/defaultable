@@ -8,6 +8,8 @@ require 'pry'
 module Defaultable
 	class Setting
 		class_attribute :defaults_file
+		class_attribute :defaults_hash
+		defaults_hash = {}
 
 		attr_accessor :root_key, :parent
 
@@ -78,6 +80,8 @@ module Defaultable
 	    	if self.defaults_file
 	      	settings = YAML.load_file(defaults_file)
 	      	return Defaultable::Setting.new(settings)
+	      elsif !self.defaults_hash.empty? && self.defaults_hash.kind_of?(Hash)
+	      	return Defaultable::Setting.new(self.defaults_hash)
 	      end
 	    end
 	  end
