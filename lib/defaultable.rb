@@ -1,10 +1,6 @@
 require "defaultable/version"
-require 'ostruct'
 require 'yaml'
 require 'active_support/core_ext/class/attribute'
-
-require 'pp'
-require 'pry'
 
 module Defaultable
 	class Settings
