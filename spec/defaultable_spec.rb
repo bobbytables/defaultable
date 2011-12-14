@@ -106,6 +106,13 @@ describe Defaultable::Settings do
 		setting.child.should eq('sxephil')
 	end
 
+	it "should accept a filename with an environment" do
+		Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/env_test.yml', 'development'
+
+		setting = Defaultable::Settings.new
+		setting.setting_key.should eq('somevalue')
+	end
+
 	it "should be extendable" do
 		class DummySetting < Defaultable::Settings
 			set_defaults :movie => 'Iron Man'
