@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["robert@maintainedauto.com"]
   gem.description   = %q{Defaultable is an extendable class to allow easy method chaining for settings along with defaults.}
   gem.summary       = %q{Settings made easy.}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/bobbytables/defaultable"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Defaultable::VERSION
 
-  gem.add_dependency("activesupport", "~> 3.1")
+  gem.add_dependency("activesupport", "3.0")
 
   gem.add_development_dependency("rspec", "~> 2.7")
   gem.add_development_dependency("pry")
