@@ -6,13 +6,13 @@ require 'active_support/core_ext/class/attribute'
 require 'pry'
 
 module Defaultable
-	class Setting < OpenStruct
+	class Setting
 		class_attribute :defaults_file
 
 		attr_accessor :root_key, :parent
 
 	  def initialize(hash=nil, root_key=nil, parent=nil)
-	    super(hash)
+	    @table = {}
 
 	    if root_key
 	    	self.root_key = root_key
@@ -52,7 +52,7 @@ module Defaultable
 	  				root_keys << current_parent.root_key
 	  				current_parent = current_parent.parent
 	  			end
-	  			
+
 	  			root_keys.reverse.each do |key|
 	  				default_settings = default_settings.send(key)
 	  			end
