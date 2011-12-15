@@ -73,11 +73,11 @@ module Defaultable
       def set_defaults(settings, env=nil)
         case settings
         when Hash
-          self.defaults = Defaultable::Settings.new(settings)
+          self.defaults = self.new(settings)
         when String
           yaml = YAML.load_file(settings)
           yaml = yaml[env] if env
-          self.defaults = Defaultable::Settings.new(yaml)
+          self.defaults = self.new(yaml)
         else
           raise ArgumentError, "You must supply a hash or a file name for default settings"
         end
