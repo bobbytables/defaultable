@@ -62,7 +62,16 @@ module Defaultable
     end
     
     def as_hash
-      @table
+      @table.inject({}) do |hash, (key, val)|
+        if val.kind_of?(Defaultable::Settings)
+          val = val.as_hash
+        else
+          val
+        end
+
+        hash[key] = val
+        hash
+      end
     end
 
     def has_parent?
