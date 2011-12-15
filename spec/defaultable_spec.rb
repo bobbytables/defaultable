@@ -113,13 +113,23 @@ describe Defaultable::Settings do
     setting.setting_key.should eq('somevalue')
   end
 
-  it "should be extendable" do
-    class DummySetting < Defaultable::Settings
-      set_defaults :movie => 'Iron Man'
+  describe "Extendable" do
+    it "should be extendable" do
+      class DummySetting < Defaultable::Settings
+        set_defaults :movie => 'Iron Man'
+      end
+
+      setting = DummySetting.new
+      setting.movie.should eq('Iron Man')
     end
 
-    setting = DummySetting.new
-    setting.movie.should eq('Iron Man')
+    it "should return settings the same class of the extension for detauls" do
+      class DummySetting < Defaultable::Settings
+        set_defaults :movie => 'Iron Man'
+      end
+
+      DummySetting.defaults.should be_a DummySetting
+    end
   end
 
   describe "Hashes" do
