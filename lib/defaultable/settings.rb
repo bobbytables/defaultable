@@ -1,17 +1,22 @@
 module Defaultable
 	class Settings
     class_attribute :defaults
-    attr_accessor :root_key, :parent
+    attr_accessor :registry_enabled
+    attr_reader   :registry
 
-    def initialize(hash=nil, root_key=nil, parent=nil, skip_defaults=false)
-      @table = {}
+    attr_accessor :parent, :root_key
 
-      self.root_key = root_key if root_key
-      self.parent = parent if parent
+    def initialize(hash=nil, skip_defaults=false, enable_registry=true)
+      @table    = {}
+      @registry = Registry.new
 
       if !skip_defaults && !self.class.defaults.nil?
+      	self.registry_enabled = false
         recursive_hash_assignment self.class.defaults
       end
+
+      # Enable the registry so we know what actually was set beyond defaults
+      self.registry_enabled = enable_registry
       
       if !hash.nil? && hash.kind_of?(Hash)
         recursive_hash_assignment hash
@@ -29,9 +34,18 @@ module Defaultable
         key = message.to_s.gsub(/=$/, '')
         value = args.first
 
+        if self.registry_enabled
+        	self.registry.add(key, value)
+        end
+
         if value.kind_of?(Defaultable::Settings)
-          value.parent   = self
-          value.root_key = key
+        	value.root_key = key
+        	value.parent   = self
+        end
+
+        if self.parent && self.parent.registry_enabled
+        	self.registry.add(key, value)
+        	self.parent.registry.add(self.root_key, self.class.new(self.registry.as_hash))
         end
 
         @table[key] = value
@@ -49,10 +63,6 @@ module Defaultable
         hash[key] = val
         hash
       end
-    end
-
-    def has_parent?
-      !!self.parent
     end
 
     def recursive_hash_assignment(hash)
@@ -76,7 +86,7 @@ module Defaultable
           self.send("#{key}=", hash)
         end
       else
-        self.send("#{key}=", self.class.new(hash, key, self, true))
+        self.send("#{key}=", self.class.new(hash, true, self.registry_enabled))
       end
     end
     
