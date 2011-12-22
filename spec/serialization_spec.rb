@@ -6,6 +6,10 @@ describe Defaultable::Serialization do
 		Defaultable::Serialization.settings_class = DummySetting
 	end
 
+	after(:each) do
+		DummySetting.set_defaults Hash.new
+	end
+
 	it "should set a class for settings" do
 		Defaultable::Serialization.settings_class.should eq(DummySetting)
 	end
@@ -62,6 +66,44 @@ describe Defaultable::Serialization do
 		DummySetting.set_defaults :bobby => 'tables'
 
 		unserialized = encoder.load(serialized)
+		unserialized.bobby?.should be_true
+	end
+
+	it "should not serialize defaults that didn't get overwritten" do
+		encoder  = Defaultable::Serialization.new
+		settings = DummySetting.new
+
+		settings.foo = 'bar'
+		serialized = encoder.dump(settings)
+
+		DummySetting.set_defaults :bobby => 'tables'
+
+		unserialized = encoder.raw_load(serialized)
+		unserialized.bobby?.should be_false
+	end
+
+	it "should not serialize nested defaults that didn't get overwritten" do
+		encoder  = Defaultable::Serialization.new
+		settings = DummySetting.new
+
+		settings.foo = 'bar'
+		serialized = encoder.dump(settings)
+
+		DummySetting.set_defaults :bobby => {:effing => 'tables'}
+
+		unserialized = encoder.raw_load(serialized)
+		unserialized.bobby?.should be_false
+	end
+
+	it "should not serialize nested defaults that didn't get overwritten (but other values did)" do
+		encoder  = Defaultable::Serialization.new
+		DummySetting.set_defaults :bobby => {:effing => 'tables'}
+		settings = DummySetting.new
+
+		settings.bobby = 'tables'
+		serialized = encoder.dump(settings)
+
+		unserialized = encoder.raw_load(serialized)
 		unserialized.bobby?.should be_true
 	end
 end

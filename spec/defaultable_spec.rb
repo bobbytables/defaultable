@@ -5,11 +5,6 @@ describe Defaultable::Settings do
     Defaultable::Settings.set_defaults({})
   end
 
-  it "should not have a parent" do
-    setting = Defaultable::Settings.new
-    setting.has_parent?.should be_false
-  end
-
   it "should initialize with a hash" do
     setting = Defaultable::Settings.new({:child => 'Bobert'})
     setting.child.should eq('Bobert')
@@ -176,6 +171,48 @@ describe Defaultable::Settings do
 
     it "should mash defaults together with new settings" do
       setting = DummySetting.new(:movie => { :genre => 'asdf' })
+    end
+  end
+
+  describe Defaultable::Registry do
+    before(:each) do
+      class DummySetting < Defaultable::Settings
+        set_defaults :movie => {:name => 'Iron Man' }
+      end
+    end
+
+    it "should not include defaults in the registry" do
+      setting = DummySetting.new
+      setting.registry.as_hash.has_key?(:movie).should be_false
+    end
+
+    it "should not include defaults in the registry unless overwritten" do
+      setting = DummySetting.new
+      setting.movie = 'asdf'
+      setting.registry.as_hash.has_key?(:movie).should be_false
+    end
+
+    it "should be able to overwrite nested defaults" do
+      class DummySetting < Defaultable::Settings
+        set_defaults :movie => {:name => 'Iron Man', :genre => 'Action Adventure'}
+      end
+      setting = DummySetting.new
+      setting.movie.genre = 'Unable to put into mongodb gridfs'
+
+      setting.registry.as_hash['movie'].has_key?('genre').should be_true
+      setting.registry.as_hash['movie'].has_key?('name').should be_false
+    end
+
+    it "should be able to overwrite multiple nested defaults" do
+      class DummySetting < Defaultable::Settings
+        set_defaults :movie => {:name => 'Iron Man', :genre => 'Action Adventure'}
+      end
+      setting = DummySetting.new
+      setting.movie.genre = 'Unable to put into mongodb gridfs'
+      setting.movie.name = 'Independence Day'
+
+      setting.registry.as_hash['movie'].has_key?('genre').should be_true
+      setting.registry.as_hash['movie'].has_key?('name').should be_true
     end
   end
 end
