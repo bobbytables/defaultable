@@ -5,7 +5,7 @@ module Defaultable
 	  # Called to deserialize data to ruby object.
 	  def load(data)
 	  	if data
-	    	obj = YAML.load(data)
+	    	obj = raw_load(data)
 
 	    	raise TypeError, "Deserialized object is not of type #{self.class.settings_class.name}. Got #{obj.class}" unless obj.is_a?(self.class.settings_class)
 
@@ -19,7 +19,13 @@ module Defaultable
 	  # Called to convert from ruby object to serialized data.
 	  def dump(obj)
 	  	raise TypeError, "Serialization failed: Object is not of type #{self.class.settings_class.name}." unless obj.is_a?(self.class.settings_class)
-	    obj.to_yaml if obj
+
+	  	# We need to use the registry because we don't want to store defaults that weren't overwritten
+	    obj.class.new(obj.registry.as_hash).to_yaml if obj
+	  end
+
+	  def raw_load(data)
+	  	YAML.load(data)
 	  end
 	end
 end
