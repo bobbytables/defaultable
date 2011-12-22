@@ -35,7 +35,7 @@ describe Defaultable::Settings do
 
   it "should have default settings" do
     Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
-    Defaultable::Settings.defaults.should be_kind_of(Defaultable::Settings)
+    Defaultable::Settings.defaults.should be_kind_of(Hash)
   end
 
   it "should have a default setting for a key" do
@@ -128,7 +128,7 @@ describe Defaultable::Settings do
         set_defaults :movie => 'Iron Man'
       end
 
-      DummySetting.defaults.should be_a DummySetting
+      DummySetting.defaults.should be_a Hash
     end
   end
 
@@ -147,6 +147,28 @@ describe Defaultable::Settings do
 
       setting.name = 'Robert'
       setting.as_hash['name'].should eq('Robert')
+    end
+  end
+
+  describe "Defaults" do
+    before(:each) do
+      class DummySetting < Defaultable::Settings
+        set_defaults :movie => {:name => 'Iron Man' }
+      end
+    end
+
+    it "should have a key from defaults on initialization" do
+      setting = DummySetting.new
+      setting.movie?.should be_true
+    end
+
+    it "should have a hash with a length from defaults on initialization" do
+      setting = DummySetting.new
+      setting.as_hash.length.should eq(1)
+    end
+
+    it "should mash defaults together with new settings" do
+      setting = DummySetting.new(:movie => { :genre => 'asdf' })
     end
   end
 end
