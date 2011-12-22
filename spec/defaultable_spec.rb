@@ -33,84 +33,91 @@ describe Defaultable::Settings do
     setting.parent.child.should eq('Rob')
   end
 
-  it "should have default settings" do
-    Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
-    Defaultable::Settings.defaults.should be_kind_of(Hash)
+  it "should have a question mark method for keys" do
+    setting = Defaultable::Settings.new(:foo => 'bar')
+    setting.foo?.should be_true
   end
 
-  it "should have a default setting for a key" do
-    Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
+  describe "Defaults" do
+    it "should have default settings" do
+      Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
+      Defaultable::Settings.defaults.should be_kind_of(Hash)
+    end
 
-    setting = Defaultable::Settings.new
-    setting.grandparent.should be_kind_of Defaultable::Settings
-  end
+    it "should have a default setting for a key" do
+      Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
 
-  it "should have another key for another setting" do
-    Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
+      setting = Defaultable::Settings.new
+      setting.grandparent.should be_kind_of Defaultable::Settings
+    end
 
-    setting = Defaultable::Settings.new
-    setting.grandparent.child.grandchild1.should eq('robert')
-  end
+    it "should have another key for another setting" do
+      Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
 
-  it "should set a key but still have defaults" do
-    Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
+      setting = Defaultable::Settings.new
+      setting.grandparent.child.grandchild1.should eq('robert')
+    end
 
-    setting = Defaultable::Settings.new({
-      :grandparent => {
-        :child => {
-          :grandchild3 => 'hurdur'
+    it "should set a key but still have defaults" do
+      Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
+
+      setting = Defaultable::Settings.new({
+        :grandparent => {
+          :child => {
+            :grandchild3 => 'hurdur'
+          }
         }
-      }
-    })
+      })
 
-    setting.grandparent.child.grandchild3.should eq('hurdur')
-    setting.grandparent.child.grandchild2.should eq('brian')
-  end
+      setting.grandparent.child.grandchild3.should eq('hurdur')
+      setting.grandparent.child.grandchild2.should eq('brian')
+    end
 
-  it "should be able to overwrite a default" do
-    Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
+    it "should be able to overwrite a default" do
+      Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
 
-    setting = Defaultable::Settings.new({
-      :grandparent => {
-        :child => {
-          :grandchild3 => 'hurdur'
+      setting = Defaultable::Settings.new({
+        :grandparent => {
+          :child => {
+            :grandchild3 => 'hurdur'
+          }
         }
-      }
-    })
+      })
 
-    setting.grandparent.child.grandchild3.should eq('hurdur')
-    setting.grandparent.child.grandchild2 = 'drpepper'
-    setting.grandparent.child.grandchild2.should eq('drpepper')
-  end
+      setting.grandparent.child.grandchild3.should eq('hurdur')
+      setting.grandparent.child.grandchild2 = 'drpepper'
+      setting.grandparent.child.grandchild2.should eq('drpepper')
+    end
 
-  it "should be able to set a key in the middle of defaults" do
-    Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
+    it "should be able to set a key in the middle of defaults" do
+      Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'
 
-    setting = Defaultable::Settings.new({
-      :grandparent => {
-        :child => {
-          :grandchild3 => 'hurdur'
+      setting = Defaultable::Settings.new({
+        :grandparent => {
+          :child => {
+            :grandchild3 => 'hurdur'
+          }
         }
-      }
-    })
+      })
 
-    setting.grandparent.child.grandchild3.should eq('hurdur')
-    setting.grandparent.someotherkey = 'saweet'
-    setting.grandparent.someotherkey.should eq('saweet')
-  end
+      setting.grandparent.child.grandchild3.should eq('hurdur')
+      setting.grandparent.someotherkey = 'saweet'
+      setting.grandparent.someotherkey.should eq('saweet')
+    end
 
-  it "should be able to set a hash for defaults" do
-    Defaultable::Settings.set_defaults :child => 'sxephil'
+    it "should be able to set a hash for defaults" do
+      Defaultable::Settings.set_defaults :child => 'sxephil'
 
-    setting = Defaultable::Settings.new
-    setting.child.should eq('sxephil')
-  end
+      setting = Defaultable::Settings.new
+      setting.child.should eq('sxephil')
+    end
 
-  it "should accept a filename with an environment" do
-    Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/env_test.yml', 'development'
+    it "should accept a filename with an environment" do
+      Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/env_test.yml', 'development'
 
-    setting = Defaultable::Settings.new
-    setting.setting_key.should eq('somevalue')
+      setting = Defaultable::Settings.new
+      setting.setting_key.should eq('somevalue')
+    end
   end
 
   describe "Extendable" do
