@@ -39,7 +39,7 @@ end
 The second parameter of ```set_defaults``` is the environment variable you'd like to use from the file. For example "development".
 
 
-### Serialization
+## Serialization
 
 Sometimes we want to store settings for a database record in the actual schema. To do that, use the ```Defaultable::Serialization``` class.
 We'll use ```ActiveRecord::Base#serialize``` method in this example.
@@ -65,7 +65,7 @@ class User < ActiveRecord::Base
 end
 ```
 
-## What we just accomplished
+#### What we just accomplished
 
 Now we have the ability to setup user settings on creation and updating.
 
