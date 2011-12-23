@@ -3,7 +3,7 @@ require 'active_support/core_ext/hash'
 module Defaultable
 	class Registry
 		def initialize
-			@table = {}
+			@table = HashWithIndifferentAccess.new
 		end
 
 		def add(key, value)
@@ -22,11 +22,5 @@ module Defaultable
         hash
       end
 		end
-
-		# def diff(defaults)
-		# 	settings = self.as_hash
-
-		# 	settings.diff(defaults)
-		# end
 	end
 end

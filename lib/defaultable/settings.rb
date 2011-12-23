@@ -43,9 +43,9 @@ module Defaultable
         	value.parent   = self
         end
 
-        if self.parent && self.parent.registry_enabled
-        	self.registry.add(key, value)
-        	self.parent.registry.add(self.root_key, self.class.new(self.registry.as_hash))
+        if self.parent
+          self.registry.add(key, value)
+        	update_parent_registries
         end
 
         @table[key] = value
@@ -87,6 +87,13 @@ module Defaultable
         end
       else
         self.send("#{key}=", self.class.new(hash, true, self.registry_enabled))
+      end
+    end
+
+    def update_parent_registries
+      if self.parent && self.root_key
+        self.parent.registry.add(self.root_key, self)
+        self.parent.update_parent_registries
       end
     end
     
