@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'awesome_print'
 
 describe Defaultable::Registry do
 	before(:each) do
@@ -49,5 +50,15 @@ describe Defaultable::Registry do
 		setting.registry.as_hash.should have_key('values')
 		setting.values.bar?.should be_true
 		setting.values.foo?.should be_true
+	end
+
+	it "should set really nested attributes after defaults are set." do
+		DummySetting.set_defaults :values => { :foo => { :foo => 'fighters'} }
+
+		setting = DummySetting.new
+		setting.values.foo.boo = 'notta'
+
+		setting.registry.as_hash['values']['foo'].should have_key('boo')
+		setting.registry.as_hash['values']['foo'].should_not have_key('foo')
 	end
 end
