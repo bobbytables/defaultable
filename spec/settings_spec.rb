@@ -33,6 +33,16 @@ describe Defaultable::Settings do
     setting.foo?.should be_true
   end
 
+  it ".empty? should return true" do
+    setting = Defaultable::Settings.new
+    setting.should be_empty
+  end
+
+  it ".empty? should return false" do
+    setting = Defaultable::Settings.new(:foo => 'bar')
+    setting.should_not be_empty
+  end
+
   describe "Defaults." do
     it "should have default settings." do
       Defaultable::Settings.set_defaults File.expand_path('../', __FILE__) + '/test.yml'

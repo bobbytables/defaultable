@@ -65,6 +65,10 @@ module Defaultable
       end
     end
 
+    def empty?
+      @table.length == 0
+    end
+
     def recursive_hash_assignment(hash)
       hash.each do |key, value|
         if value.kind_of?(Hash)
