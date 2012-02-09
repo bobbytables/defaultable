@@ -1,6 +1,6 @@
 module Defaultable
 	class Serialization
-		class_attribute :settings_class
+		cattr_accessor :settings_class
 
 	  # Called to deserialize data to ruby object.
 	  def load(data)
