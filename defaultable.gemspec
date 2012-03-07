@@ -15,10 +15,10 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Defaultable::VERSION
 
-  gem.add_dependency("activesupport", ">= 3.0")
+  gem.add_dependency("activesupport", ">= 3.2")
 
   gem.add_development_dependency("rspec", "~> 2.7")
   gem.add_development_dependency("pry")
   gem.add_development_dependency("awesome_print")
-  gem.add_development_dependency("activerecord", ">= 3.0")
+  gem.add_development_dependency("activerecord", ">= 3.2")
 end
