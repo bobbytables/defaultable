@@ -1,6 +1,6 @@
 module Defaultable
 	class Serialization
-		cattr_accessor :settings_class
+		class_attribute :settings_class
 
 	  # Called to deserialize data to ruby object.
 	  def load(data)
@@ -18,10 +18,14 @@ module Defaultable
 
 	  # Called to convert from ruby object to serialized data.
 	  def dump(obj)
-	  	raise TypeError, "Serialization failed: Object is not of type #{self.class.settings_class.name}." unless obj.is_a?(self.class.settings_class)
+	  	raise TypeError, "Serialization failed: Object is not of type #{self.class.settings_class.name}." if !obj.is_a?(self.class.settings_class) && !obj.nil?
 
 	  	# We need to use the registry because we don't want to store defaults that weren't overwritten
-	    obj.class.new(obj.registry.as_hash).to_yaml if obj
+	  	if obj.nil?
+	  		self.class.settings_class.new
+	    else
+	    	obj.class.new(obj.registry.as_hash).to_yaml if obj
+		  end
 	  end
 
 	  def raw_load(data)
