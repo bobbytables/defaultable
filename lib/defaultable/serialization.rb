@@ -1,33 +1,37 @@
+# Include this module to support ActiveRecord serialization
+
 module Defaultable
-	class Serialization
-		cattr_accessor :settings_class
-
+	module Serialization
 	  # Called to deserialize data to ruby object.
-	  def load(data)
-	  	overrides = {}
+	  extend ActiveSupport::Concern
 
-	  	if data
-	    	obj = raw_load(data)
-	    	raise TypeError, "Deserialized object is not of type #{self.class.settings_class.name}. Got #{obj.class}" unless obj.is_a?(self.class.settings_class)
-	    	overrides = obj.as_hash
-	    end
+	  module ClassMethods
+		  def load(data)
+		  	overrides = {}
 
-    	self.settings_class.new(overrides)
-	  end
+		  	if data
+		    	obj = raw_load(data)
+		    	raise TypeError, "Deserialized object is not of type #{self.name}. Got #{obj.class}" unless obj.kind_of?(self)
+		    	overrides = obj.as_hash
+		    end
 
-	  # Called to convert from ruby object to serialized data.
-	  def dump(obj)
-	  	raise TypeError, "Serialization failed: Object is not of type #{self.class.settings_class.name}." if !obj.is_a?(self.class.settings_class) && !obj.nil?
-
-	  	if obj.nil?
-	  		self.class.settings_class.new
-	    else
-	    	obj.class.new(obj.registry.as_hash).to_yaml if obj
+	    	self.new(overrides)
 		  end
-	  end
 
-	  def raw_load(data)
-	  	YAML.load(data)
-	  end
+		  # Called to convert from ruby object to serialized data.
+		  def dump(obj)
+		  	raise TypeError, "Serialization failed: Object is not of type #{self.name}." if !obj.kind_of?(self) && !obj.nil?
+
+		  	if obj.nil?
+		  		self.new
+		    else
+		    	obj.class.new(obj.registry.as_hash).to_yaml if obj
+			  end
+		  end
+
+		  def raw_load(data)
+		  	YAML.load(data)
+		  end
+		end
 	end
 end
