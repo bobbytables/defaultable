@@ -48,20 +48,15 @@ First create a model for your settings by extending ```Defaultable::Settings```.
 
 ```
 class UserSetting < Defaultable::Settings
+  include Defaultable::Serialization
 end
 ```
 
-Second, create an initializer. We need this to setup the serialization class for ActiveRecord.
-
-```
-Defaultable::Serialization.settings_class = UserSetting
-```
-
-Now on your User model, setup the serialization class on it.
+Now on your User model, setup the settings class on it.
 
 ```
 class User < ActiveRecord::Base
-	serialize :settings, Defaultable::Serialization
+	serialize :settings, UserSetting
 end
 ```
 
@@ -78,8 +73,27 @@ user.save
 User.find(1).settings.newsletter # => true
 ```
 
+Defaultable won't store settings that are defaults until overridden but you may use them otherwise. Meaning that it'll retain defaults on save.
 
+## Other methods you may find useful
 
+Defaultable has some other methods you may want to use:
 
+Defaultable::Settings#as_hash
+```
+irb(main):007:0> a.settings.as_hash
+=> {"blah"=>"stuff", "foo"=>{"bar"=>"foo"}}
+```
 
+It returns a recursive hash of settings. It works on all levels however, such as ```a.settings.foo.as_hash```
 
+Defaultable::Settings#recursive_hash_assignment
+```
+irb(main):009:0> settings.recursive_hash_assignment :foo => {:bar => {:foo => 'bar'}}
+=> {:foo=>{:bar=>{:foo=>"bar"}}}
+
+irb(main):011:0> settings.foo.bar.foo
+=> "bar"
+```
+
+And a few others, sorry for the lack of RDoc =(
