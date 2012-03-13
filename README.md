@@ -80,6 +80,7 @@ Defaultable won't store settings that are defaults until overridden but you may 
 Defaultable has some other methods you may want to use:
 
 Defaultable::Settings#as_hash
+
 ```
 irb(main):007:0> a.settings.as_hash
 => {"blah"=>"stuff", "foo"=>{"bar"=>"foo"}}
@@ -88,6 +89,7 @@ irb(main):007:0> a.settings.as_hash
 It returns a recursive hash of settings. It works on all levels however, such as ```a.settings.foo.as_hash```
 
 Defaultable::Settings#recursive_hash_assignment
+
 ```
 irb(main):009:0> settings.recursive_hash_assignment :foo => {:bar => {:foo => 'bar'}}
 => {:foo=>{:bar=>{:foo=>"bar"}}}
