@@ -104,5 +104,6 @@ describe Defaultable::Serialization do
 
 		unserialized = DummySetting.raw_load(serialized)
 		unserialized.bobby.effing.stillgoing?.should be_true
+		unserialized.bobby.effing.stillgoing.should eq('ross')
 	end
 end
