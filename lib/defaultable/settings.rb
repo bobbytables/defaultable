@@ -69,6 +69,10 @@ module Defaultable
       @table.length == 0
     end
 
+    def delete(key)
+      @table.delete(key.to_s)
+    end
+
     def recursive_hash_assignment(hash)
       hash.each do |key, value|
         if value.kind_of?(Hash)

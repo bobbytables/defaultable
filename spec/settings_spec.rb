@@ -38,6 +38,13 @@ describe Defaultable::Settings do
     setting.should be_empty
   end
 
+  it '.delete should return the value and delete it from the settings' do
+    setting = Defaultable::Settings.new
+    setting.foo = 'bar'
+    setting.delete(:foo).should eq 'bar'
+    setting.foo.should be_nil
+  end
+
   it ".empty? should return false" do
     setting = Defaultable::Settings.new(:foo => 'bar')
     setting.should_not be_empty
